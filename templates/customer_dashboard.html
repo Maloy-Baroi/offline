@@ -1,0 +1,209 @@
+{% extends 'Customer_base.html' %}
+{% load static %}
+{% block main %}
+    <style>
+        /* Banner Start */
+        .banner {
+            padding: 100px 0;
+            margin-bottom: 10px;
+            background: url("{% static 'images/banner_image.png' %}") no-repeat;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        .banner-content h2 {
+            font-family: 'Ubuntu', sans-serif !important;
+            font-weight: 700 !important;
+            font-size: 55px;
+            color: #262626;
+            line-height: 65px;
+            margin: 0 0 14px 0;
+            text-transform: none;
+        }
+
+        .banner-content p {
+            font-size: 20px;
+            color: #293A4E;
+            letter-spacing: 0;
+            line-height: 30px;
+            margin: 0 0 95px 0;
+            text-transform: none;
+        }
+
+        @media only screen and (max-width: 767px) {
+            .banner {
+                padding: 70px 0;
+                display: none !important;
+            }
+
+            .banner h2, p {
+                display: none !important;
+            }
+
+            table tbody tr {
+                margin-top: 100px;
+            }
+
+            .product-image-cls {
+                width: auto !important;
+                height: 200px !important;
+            }
+
+        }
+
+        /* Start Table */
+        table {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+            margin: 0;
+            padding: 100px 25px;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        table caption {
+            font-size: 1.5em;
+            margin: .5em 0 .75em;
+        }
+
+        table tr {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: .35em;
+        }
+
+        table th,
+        table td {
+            padding: .625em;
+            text-align: center;
+        }
+
+        table th {
+            font-size: .85em;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        @media screen and (max-width: 600px) {
+            table {
+                border: 0;
+            }
+
+            table caption {
+                font-size: 1.3em;
+            }
+
+            table thead {
+                border: none;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+            }
+
+            table tr {
+                border-bottom: 3px solid #ddd;
+                display: block;
+                margin-bottom: .625em;
+            }
+
+            table td {
+                border-bottom: 1px solid #ddd;
+                display: block;
+                font-size: .8em;
+                text-align: right;
+            }
+
+            table td::before {
+                /*
+                * aria-label has no advantage, it won't be read inside a table
+                content: attr(aria-label);
+                */
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+
+            table td:last-child {
+                border-bottom: 0;
+            }
+        }
+
+        .product-image-cls {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+    <div class="container-fluid banner">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-8 col-lg-5">
+                    <div class="banner-content-wrapper">
+                        <div class="banner-content">
+                            <h2 class="wow fadeInRight" data-wow-duration=".7s"
+                                style="visibility: visible; animation-duration: 0.7s; animation-name: fadeInRight;">#1
+                                Platform<br>
+                                for All Services</h2>
+                            <p class="wow fadeInRight" data-wow-duration=".7s"
+                               style="visibility: visible; animation-duration: 0.7s; animation-name: fadeInRight;">One
+                                app,
+                                all services at your fingertips.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <table>
+            <caption>Products</caption>
+            <thead>
+            <tr>
+                <th scope="col">Product Name</th>
+                <th scope="col">Image</th>
+                <th scope="col">Category</th>
+                <th scope="col">Price</th>
+                <th scope="col">Asking Quantity</th>
+                <th scope="col">Purchase</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    {% if product.product_name in prod_name %}
+                        <td data-label="Product Name" style="color: #e40101">{{ product.product_name }}</td>
+                    {% else %}
+                        <td data-label="Product Name">{{ product.product_name }}</td>
+                    {% endif %}
+                    <td data-label="Images">
+                        <img class="product-image-cls" src="{{ product.image.url }}" alt="Image">
+                    </td>
+                    <td data-label="Category">
+                        {{ product.category_name }}
+                    </td>
+                    <td data-label="Price">
+                        {{ product.price_per_unit }}
+                    </td>
+                    <form action="{% url 'App_auth:add-to-cart' %}" method="post">
+                        {% csrf_token %}
+                        <input type="number" name="product_id" value="{{ product.id }}" style="display: none;">
+                        <td data-label="Asking Quantity">
+                            <input type="number" class="form-control" name="product_asking_quantity" required>
+                        </td>
+                        <td data-label="Purchase">
+                            <button class="btn btn-primary btn-lg">Add to cart</button>
+                        </td>
+                    </form>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

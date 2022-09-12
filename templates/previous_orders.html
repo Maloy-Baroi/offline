@@ -1,0 +1,222 @@
+{% extends 'customer_dashboard.html' %}
+{% block main %}
+<style>
+        @media only screen and (max-width: 767px) {
+            table tbody tr {
+                margin-top: 100px;
+            }
+
+            .product-image-cls {
+                width: auto !important;
+                height: 200px !important;
+            }
+
+        }
+
+        /* Start Table */
+        table {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+            margin: 0;
+            padding: 100px 25px;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        table caption {
+            font-size: 1.5em;
+            margin: .5em 0 .75em;
+        }
+
+        table tr {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: .35em;
+        }
+
+        table th,
+        table td {
+            padding: .625em;
+            text-align: center;
+        }
+
+        table th {
+            font-size: .85em;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        @media screen and (max-width: 600px) {
+            table {
+                border: 0;
+            }
+
+            table caption {
+                font-size: 1.3em;
+            }
+
+            table thead {
+                border: none;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+            }
+
+            table tr {
+                border-bottom: 3px solid #ddd;
+                display: block;
+                margin-bottom: .625em;
+            }
+
+            table td {
+                border-bottom: 1px solid #ddd;
+                display: block;
+                font-size: .8em;
+                text-align: right;
+            }
+
+            table td::before {
+                /*
+                * aria-label has no advantage, it won't be read inside a table
+                content: attr(aria-label);
+                */
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+
+            table td:last-child {
+                border-bottom: 0;
+            }
+        }
+
+        .product-image-cls {
+            width: 100%;
+            height: auto;
+        }
+
+        .main_wrapper {
+            overflow: hidden;
+            width: 70%;
+            overflow: hidden
+        }
+
+        h3 {
+            color: red;
+        }
+
+        .wrapper_single {
+            float: left;
+            width: 40%;
+            margin-right: 50px
+
+        }
+
+        .wrapper_all {
+            float: right;
+            width: 50%;
+            margin-right: 50px
+
+        }
+
+        .table {
+            border-collapse: collapse;
+
+        }
+
+        .highlight {
+            color: red;
+        }
+
+
+</style>
+<div class="container">
+    <div class="mt-5 mb-5">
+        <button class="btn btn-primary" onclick="updateDiv()">All</button>
+        <button class="btn btn-warning" onclick="FilterkeyWord('Confirmed')">Confirmed</button>
+        <button class="btn btn-success" onclick="FilterkeyWord('Completed')">Completed</button>
+        <button class="btn btn-danger" onclick="FilterkeyWord('Rejected')">Rejected</button>
+    </div>
+    <table class="table" id="menu_item_table">
+        <thead>
+        <tr>
+            <th scope="col">Date of Order</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Asking Quantity</th>
+            <th scope="col">Status</th>
+            <th scope="col">Get Product ?</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in previous_orders %}
+        <tr>
+            <td data-label="Date of Order">{{ order.created.date }}</td>
+            <td data-label="Product Name">
+                {% for order_name in order.order_items.all %}
+                <b>{{ order_name.item.product_name }}</b> <br>
+                {% endfor %}
+            </td>
+            <td data-label="Category">
+                {% for order_name in order.order_items.all %}
+                {{ order_name.item.category_name }},
+                {% endfor %}
+            </td>
+            <td data-label="Quantity">
+                {% for order_name in order.order_items.all %}
+                <b>{{ order_name.item.product_name|truncatechars:20 }}: {{ order_name.quantity }}</b> <br>
+                {% endfor %}
+            </td>
+            <td data-label="Status">{{ order.status }}</td>
+            {% if order.status == 'Completed' %}
+            <td data-label="Get Order ?">
+                You have gotten the order.
+            </td>
+            {% else %}
+            <td data-label="Get Order ?">
+                You haven't gotten the order yet.
+            </td>
+            {% endif %}
+
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+        // Specific column search script
+        function FilterkeyWord(props) {
+            // Declare variables
+            var input, filter, table, tr, td, i;
+            input = props;
+            filter = input.toLowerCase();
+            table = document.getElementById("menu_item_table");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[4];
+                // change index to change your column search
+
+                if (td) {
+                    if (td.innerHTML.toLowerCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function updateDiv() {
+            window.location.reload();
+        }
+
+</script>
+{% endblock %}
